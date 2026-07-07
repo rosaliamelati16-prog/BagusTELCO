@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bagustegarp.telkomuniversity | PRAKARSA REKAP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* --- MODERN ULTRA UI STYLE --- */
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            --success: #10b981;
+            --success-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --warning: #f59e0b;
+            --warning-gradient: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            --import-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.04), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+            --shadow-hover: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 96%;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* Header Modern */
+        header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 24px;
+            background: #60a5fa;
+            border-radius: 4px;
+        }
+
+        .domain-tag {
+            font-size: 12px;
+            color: #93c5fd;
+            margin-left: 22px;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dashboard Statistik */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 35px 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .card.success-card::before { background: var(--success); }
+        .card.warning-card::before { background: var(--warning); }
+
+        .card h3 {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 8px;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        /* Grid Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 35px;
+            margin-bottom: 60px;
+        }
+
+        @media (min-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        .form-container, .table-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--primary-light);
+        }
+
+        /* Pencarian & Ekspor/Import */
+        .table-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        @media (min-width: 800px) {
+            .table-tools {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export, .btn-import {
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-export {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-import {
+            background: var(--import-gradient);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-export:hover, .btn-import:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Styling */
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #fdfdfd;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-light);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-gps {
+            background-color: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0 15px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+
+        .btn-gps:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-submit {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            font-size: 15px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        /* Tabel Ultra Polish */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 16px 14px;
+            text-align: center;
+            border-bottom: 2px solid #1e40af;
+        }
+
+        table td {
+            padding: 14px 14px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            color: #334155;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-delete {
+            background-color: #fee2e2;
+            color: #ef4444;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #fca5a5;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        
+        .btn-delete:hover { 
+            background-color: #ef4444; 
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .empty-row {
+            text-align: center !important;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 35px !important;
+            background: #fff !important;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            background-color: #e2e8f0;
+            margin-top: auto;
+            border-top: 1px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="brand-section">
+                <h1>PRAKARSA REKAP</h1>
+                <span class="domain-tag">bagustegarp.telkomuniversity</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section class="stats-section">
+            <div class="card">
+                <h3>Total Laporan Prakarsa</h3>
+                <p class="stat-number" id="total-data">0</p>
+            </div>
+            <div class="card success-card">
+                <h3>Total Anggaran Prakarsa</h3>
+                <p class="stat-number" id="total-anggaran">Rp 0</p>
+            </div>
+            <div class="card warning-card">
+                <h3>Total Realisasi</h3>
+                <p class="stat-number" id="total-realisasi">Rp 0</p>
+            </div>
+        </section>
+
+        <div class="content-grid">
+            
+            <section class="form-container">
+                <h2>Input Data Prakarsa</h2>
+                <form id="dataForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="kecamatan">Kecamatan</label>
+                            <input type="text" id="kecamatan" required placeholder="Masukkan kecamatan">
+                        </div>
+                        <div class="form-group">
+                            <label for="kelurahan">Kelurahan</label>
+                            <input type="text" id="kelurahan" required placeholder="Masukkan kelurahan">
+                        </div>
+                        <div class="form-group">
+                            <label for="rw">RW</label>
+                            <input type="text" id="rw" required placeholder="Contoh: 01, 02">
+                        </div>
+                        <div class="form-group">
+                            <label for="isuPrioritas">Isu Prioritas Prakarsa</label>
+                            <textarea id="isuPrioritas" rows="2" required placeholder="Tuliskan isu prioritas..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="kegiatanPrakarsa">Kegiatan Prakarsa</label>
+                            <textarea id="kegiatanPrakarsa" rows="2" required placeholder="Tuliskan detail kegiatan..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="anggaran">Anggaran Prakarsa (Rp)</label>
+                            <input type="number" id="anggaran" required placeholder="Contoh: 50000000">
+                        </div>
+                        <div class="form-group">
+                            <label for="realisasi">Realisasi (Rp)</label>
+                            <input type="number" id="realisasi" required placeholder="Contoh: 45000000">
+                        </div>
+                        <div class="form-group">
+                            <label for="outputPrakarsa">Output Prakarsa</label>
+                            <input type="text" id="outputPrakarsa" required placeholder="Contoh: Pembangunan Jalan selesai 100%">
+                        </div>
+                        <div class="form-group">
+                            <label for="koordinatLokasi">Koordinat Lokasi (Otomatis / Manual)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="koordinatLokasi" placeholder="-6.200000, 106.816666" required>
+                                <button type="button" class="btn-gps" onclick="ambilLokasiGPS()" title="Scan Lokasi Saat Ini">📍</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Simpan Laporan</button>
+                </form>
+            </section>
+
+            <section class="table-container">
+                <h2>Laporan Impact Dari Kegiatan Prakarsa</h2>
+                
+                <div class="table-tools">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Cari Kecamatan, Kelurahan, Isu..." onkeyup="jalankanPencarian()">
+                    </div>
+                    <div class="action-buttons">
+                        <input type="file" id="fileImportExcel" accept=".xlsx, .xls, .csv" style="display: none;" onchange="prosesImportExcel(event)">
+                        
+                        <button class="btn-import" onclick="document.getElementById('fileImportExcel').click()">
+                            📥 Import Excel
+                        </button>
+                        <button class="btn-export" onclick="eksporKeExcel()">
+                            📊 Ekspor ke Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>KECAMATAN</th>
+                                <th>KELURAHAN</th>
+                                <th>RW</th>
+                                <th>ISU PRIORITAS PRAKARSA</th>
+                                <th>KEGIATAN PRAKARSA</th>
+                                <th>ANGGARAN PRAKARSA</th>
+                                <th>REALISASI</th>
+                                <th>OUTPUT PRAKARSA</th>
+                                <th>KOORDINAT LOKASI</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 bagustegarp.telkomuniversity | Sistem Laporan Instansi Modern Terintegrasi.</p>
+    </footer>
+
+    <script>
+        const dataForm = document.getElementById('dataForm');
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        
+        const totalDataEl = document.getElementById('total-data');
+        const totalAnggaranEl = document.getElementById('total-anggaran');
+        const totalRealisasiEl = document.getElementById('total-realisasi');
+
+        let rekapData = JSON.parse(localStorage.getItem('prakarsaRekapRecords_v4')) || [];
+
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        };
+
+        function updateDashboard() {
+            const total = rekapData.length;
+            let totalAnggaran = 0;
+            let totalRealisasi = 0;
+            
+            rekapData.forEach(d => {
+                totalAnggaran += parseFloat(d.anggaran) || 0;
+                totalRealisasi += parseFloat(d.realisasi) || 0;
+            });
+
+            totalDataEl.innerText = total;
+            totalAnggaranEl.innerText = formatRupiah(totalAnggaran);
+            totalRealisasiEl.innerText = formatRupiah(totalRealisasi);
+        }
+
+        function renderTable(dataUntukDitampilkan = rekapData) {
+            tableBody.innerHTML = '';
+
+            if (dataUntukDitampilkan.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="11" class="empty-row">Belum ada data laporan prakarsa terekam.</td></tr>`;
+                return;
+            }
+
+            dataUntukDitampilkan.forEach((data, index) => {
+                const indexAsli = rekapData.findIndex(d => d === data);
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td><b>${index + 1}</b></td>
+                    <td>${data.kecamatan}</td>
+                    <td>${data.kelurahan}</td>
+                    <td>${data.rw}</td>
+                    <td style="white-space: normal; min-width: 180px; text-align: left;">${data.isuPrioritas}</td>
+                    <td style="white-space: normal; min-width: 180px; text-align: left;">${data.kegiatanPrakarsa}</td>
+                    <td style="font-weight: 600; color: #1e3a8a;">${formatRupiah(data.anggaran)}</td>
+                    <td style="font-weight: 600; color: #10b981;">${formatRupiah(data.realisasi)}</td>
+                    <td style="white-space: normal; min-width: 150px;">${data.outputPrakarsa}</td>
+                    <td style="color: #64748b; font-family: monospace;">${data.koordinatLokasi}</td>
+                    <td><button class="btn-delete" onclick="hapusData(${indexAsli})">Hapus</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function jalankanPencarian() {
+            const kataKunci = searchInput.value.toLowerCase();
+            const dataFilter = rekapData.filter(data => {
+                return data.kecamatan.toLowerCase().includes(kataKunci) || 
+                       data.kelurahan.toLowerCase().includes(kataKunci) ||
+                       data.isuPrioritas.toLowerCase().includes(kataKunci) ||
+                       data.kegiatanPrakarsa.toLowerCase().includes(kataKunci);
+            });
+            renderTable(dataFilter);
+        }
+
+        function ambilLokasiGPS() {
+            const fieldKoordinat = document.getElementById('koordinatLokasi');
+            
+            if (navigator.geolocation) {
+                fieldKoordinat.value = "📍 Sedang memindai GPS...";
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        fieldKoordinat.value = position.coords.latitude.toFixed(6) + ", " + position.coords.longitude.toFixed(6);
+                    },
+                    function(error) {
+                        fieldKoordinat.value = "";
+                        alert("Gagal mendapatkan lokasi. Pastikan fitur GPS diaktifkan dan browser diberi izin.");
+                    }
+                );
+            } else {
+                alert("Browser Anda tidak mendukung fitur Geolocation.");
+            }
+        }
+
+        function prosesImportExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const namaSheetPertama = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[namaSheetPertama];
+                const excelJSON = XLSX.utils.sheet_to_json(worksheet, {raw: false});
+
+                let jumlahBerhasil = 0;
+
+                excelJSON.forEach(baris => {
+                    if (baris['KECAMATAN'] || baris['KELURAHAN']) {
+                        let rawAnggaran = String(baris['ANGGARAN PRAKARSA'] || '0').replace(/[^0-9]/g, '');
+                        let rawRealisasi = String(baris['REALISASI'] || '0').replace(/[^0-9]/g, '');
+
+                        const dataImportBaru = {
+                            kecamatan: baris['KECAMATAN'] || '-',
+                            kelurahan: baris['KELURAHAN'] || '-',
+                            rw: baris['RW'] || '-',
+                            isuPrioritas: baris['ISU PRIORITAS PRAKARSA'] || '-',
+                            kegiatanPrakarsa: baris['KEGIATAN PRAKARSA'] || '-',
+                            anggaran: rawAnggaran,
+                            realisasi: rawRealisasi,
+                            outputPrakarsa: baris['OUTPUT PRAKARSA'] || '-',
+                            koordinatLokasi: baris['KOORDINAT LOKASI'] || '-'
+                        };
+                        rekapData.push(dataImportBaru);
+                        jumlahBerhasil++;
+                    }
+                });
+
+                if (jumlahBerhasil > 0) {
+                    localStorage.setItem('prakarsaRekapRecords_v4', JSON.stringify(rekapData));
+                    renderTable();
+                    updateDashboard();
+                    alert(`✅ Sukses! ${jumlahBerhasil} baris data berhasil di-import.`);
+                } else {
+                    alert("❌ Gagal mengimpor. Cek kesamaan nama kolom Excel.");
+                }
+                event.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function eksporKeExcel() {
+            if (rekapData.length === 0) {
+                alert("Belum ada data untuk diekspor!");
+                return;
+            }
+
+            let excelLayout = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">`;
+            excelLayout += `<head><meta charset="utf-8">`;
+            excelLayout += ``;
+            excelLayout += `<style>
+                table { border-collapse: collapse; font-family: 'Segoe UI', Arial, sans-serif; }
+                th { background-color: #1e3a8a; color: #ffffff; font-weight: bold; text-align: center; border: 1px solid #64748b; padding: 10px; font-size: 12px; }
+                td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; font-size: 11px; }
+                .text-left { text-align: left; }
+                .number-cell { font-weight: bold; }
+            </style>`;
+            excelLayout += `</head><body>`;
+            excelLayout += `<h3>LAPORAN IMPACT DARI KEGIATAN PRAKARSA - bagustegarp.telkomuniversity</h3>`;
+            excelLayout += `<table border="1"><thead><tr>`;
+            excelLayout += `<th>NO</th><th>KECAMATAN</th><th>KELURAHAN</th><th>RW</th><th>ISU PRIORITAS PRAKARSA</th><th>KEGIATAN PRAKARSA</th><th>ANGGARAN PRAKARSA</th><th>REALISASI</th><th>OUTPUT PRAKARSA</th><th>KOORDINAT LOKASI</th>`;
+            excelLayout += `</tr></thead><tbody>`;
+
+            rekapData.forEach((data, index) => {
+                excelLayout += `<tr>`;
+                excelLayout += `<td>${index + 1}</td>`;
+                excelLayout += `<td>${data.kecamatan}</td>`;
+                excelLayout += `<td>${data.kelurahan}</td>`;
+                excelLayout += `<td>${data.rw}</td>`;
+                excelLayout += `<td class="text-left">${data.isuPrioritas}</td>`;
+                excelLayout += `<td class="text-left">${data.kegiatanPrakarsa}</td>`;
+                excelLayout += `<td class="number-cell" style="color: #1e3a8a;">${formatRupiah(data.anggaran)}</td>`;
+                excelLayout += `<td class="number-cell" style="color: #059669;">${formatRupiah(data.realisasi)}</td>`;
+                excelLayout += `<td>${data.outputPrakarsa}</td>`;
+                excelLayout += `<td style="font-family: monospace;">${data.koordinatLokasi}</td>`;
+                excelLayout += `</tr>`;
+            });
+
+            excelLayout += `</tbody></table></body></html>`;
+
+            const blob = new Blob([excelLayout], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const linkUnduh = document.createElement("a");
+            linkUnduh.href = url;
+            linkUnduh.download = "PRAKARSA_REKAP_" + new Date().toISOString().slice(0,10) + ".xls";
+            document.body.appendChild(linkUnduh);
+            
+            linkUnduh.click();
+            document.body.removeChild(linkUnduh);
+        }
+
+        dataForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const dataBaru = {
+                kecamatan: document.getElementById('kecamatan').value,
+                kelurahan: document.getElementById('kelurahan').value,
+                rw: document.getElementById('rw').value,
+                isuPrioritas: document.getElementById('isuPrioritas').value,
+                kegiatanPrakarsa: document.getElementById('kegiatanPrakarsa').value,
+                anggaran: document.getElementById('anggaran').value,
+                realisasi: document.getElementById('realisasi').value,
+                outputPrakarsa: document.getElementById('outputPrakarsa').value,
+                koordinatLokasi: document.getElementById('koordinatLokasi').value
+            };
+
+            rekapData.push(dataBaru);
+            localStorage.setItem('prakarsaRekapRecords_v4', JSON.stringify(rekapData));
+
+            dataForm.reset();
+            searchInput.value = ''; 
+
+            renderTable();
+            updateDashboard();
+        });
+
+        function hapusData(indexAsli) {
+            if(confirm("Apakah Anda yakin ingin menghapus data laporan prakarsa ini?")) {
+                rekapData.splice(indexAsli, 1);
+                localStorage.setItem('prakarsaRekapRecords_v4', JSON.stringify(rekapData));
+                
+                if (searchInput.value !== '') {
+                    jalankanPencarian();
+                } else {
+                    renderTable();
+                }
+                updateDashboard();
+            }
+        }
+
+        renderTable();
+        updateDashboard();
+    </script>
+</body>
+</html>
